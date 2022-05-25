@@ -27,7 +27,7 @@ public class UserPostRoute {
 	  public RouterFunction<ServerResponse> route(UserPostHandler userPostHandler) {
 
 	    return RouterFunctions
-	      .route(GET("/userpost/{id}").and(accept(MediaType.APPLICATION_JSON)), userPostHandler::userPosts);
+	      .route(GET("/userposts/{id}").and(accept(MediaType.APPLICATION_JSON)), userPostHandler::userPosts);
 	  }
 	  
 	  @Bean
