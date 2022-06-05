@@ -27,8 +27,8 @@ public class UserPostHandler {
 		Mono<User> userM = this.userWebClient.user(id)
 				.onErrorMap(e -> new MyException("Error when getting user", e));
 		Mono<List<Post>> postsM = this.userWebClient.posts(id)
-				.collectList()
-				.onErrorMap(e -> new MyException("Error when getting posts", e));
+				.onErrorMap(e -> new MyException("Error when getting posts", e))
+				.collectList();
 
 		return userM.zipWith(postsM)
 				.map(p -> {
@@ -38,11 +38,33 @@ public class UserPostHandler {
 					userPost.setUser(user);
 					userPost.setPosts(posts);
 					return userPost;
-				}).flatMap(up -> ServerResponse
+				})
+				.flatMap(up -> ServerResponse
 						.ok()
 						.contentType(MediaType.APPLICATION_JSON)
 						.body(BodyInserters.fromValue(up))
 				.switchIfEmpty(ServerResponse.notFound().build()));
 		
+	}
+	
+	public Mono<ServerResponse> allUsersWithPosts(ServerRequest request) {
+		return this.userWebClient.users()
+				.onErrorMap(e -> new MyException("Error when getting users", e))
+				.flatMap(u -> {
+					return this.userWebClient.posts(u.getId())
+							.onErrorMap(e -> new MyException("Error when getting posts by user", e))
+							.collectList()
+							.map(ps -> {
+								return new UserPost(u, ps);
+							});
+							
+				})
+				.collectList()
+				.flatMap(up -> ServerResponse
+						.ok()
+						.contentType(MediaType.APPLICATION_JSON)
+						.body(BodyInserters.fromValue(up))
+						.switchIfEmpty(ServerResponse.notFound().build()));
+
 	}
 }

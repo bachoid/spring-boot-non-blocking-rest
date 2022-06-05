@@ -27,7 +27,8 @@ public class UserPostRoute {
 	  public RouterFunction<ServerResponse> route(UserPostHandler userPostHandler) {
 
 	    return RouterFunctions
-	      .route(GET("/userposts/{id}").and(accept(MediaType.APPLICATION_JSON)), userPostHandler::userPosts);
+	      .route(GET("/userposts/{id}").and(accept(MediaType.APPLICATION_JSON)), userPostHandler::userPosts)
+	      .andRoute(GET("/userposts").and(accept(MediaType.APPLICATION_JSON)), userPostHandler::allUsersWithPosts);
 	  }
 	  
 	  @Bean
@@ -36,6 +37,13 @@ public class UserPostRoute {
 	              .onErrorResume(MyException.class, e -> {
 	                  ServerHttpResponse response = exchange.getResponse();
 	                  response.setStatusCode(HttpStatus.NOT_FOUND);
+	                  byte[] bytes = e.getMessage().getBytes(StandardCharsets.UTF_8);
+	                  DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+	                  return exchange.getResponse().writeWith(Flux.just(buffer));
+	              })
+	              .onErrorResume(Exception.class, e -> {
+	                  ServerHttpResponse response = exchange.getResponse();
+	                  response.setStatusCode(HttpStatus.BAD_REQUEST);
 	                  byte[] bytes = e.getMessage().getBytes(StandardCharsets.UTF_8);
 	                  DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
 	                  return exchange.getResponse().writeWith(Flux.just(buffer));

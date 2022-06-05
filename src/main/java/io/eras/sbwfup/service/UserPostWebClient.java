@@ -28,6 +28,15 @@ public class UserPostWebClient {
 				.bodyToMono(User.class)
 				.onErrorMap(e -> new MyException("Error when getting user", e));
 	}
+	
+	public Flux<User> users() {
+		return this.client.get()
+				.uri("/users")
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.bodyToFlux(User.class)
+				.onErrorMap(e -> new MyException("Error when getting users", e));
+	}
 
 	public Flux<Post> posts(Long id) {
 		return this.client.get()
