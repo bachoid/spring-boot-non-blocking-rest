@@ -10,3 +10,7 @@ http://localhost:8080/userposts/{id}
 
 returns user+posts by user id
 
+http://localhost:8080/userposts/
+
+returns all users with their posts
+
