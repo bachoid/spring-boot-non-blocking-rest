@@ -1,6 +1,6 @@
 # spring-boot-non-blocking-rest
 
-Non Blocking Rest Demo
+Non Blocking Rest Api Demo, Reactive Java, Webflux.
 
 build:
 mvn clean spring-boot:run
