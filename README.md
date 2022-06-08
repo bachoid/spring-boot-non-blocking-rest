@@ -2,15 +2,19 @@
 
 Non Blocking Rest Api Demo, Reactive Java, Webflux.
 
-build:
+Build:
 mvn clean spring-boot:run
 
-test from browser:
+Test from browser:
+
 http://localhost:8080/userposts/{id}
 
 returns user+posts by user id
 
 http://localhost:8080/userposts/
 
-returns all users with their posts
+returns all users with their posts.
+
+Data is received from external rest
+service(https://jsonplaceholder.typicode.com) by Spring WebClient.
 
